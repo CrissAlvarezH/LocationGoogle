@@ -27,7 +27,7 @@ public class LocationGoogleService extends Service {
   private final String TAG = "PosicionServicio";
 
   private FusedLocationProviderClient miFusedLocationCliente;
-  private TimerTaskCapturarPosicion timerTaskCapturarPosicion;
+//  private TimerTaskCapturarPosicion timerTaskCapturarPosicion;
 
   public LocationGoogleService() {
   }
@@ -39,7 +39,7 @@ public class LocationGoogleService extends Service {
     miFusedLocationCliente = LocationServices.getFusedLocationProviderClient(this);
 
     LocationRequest locationRequest = new LocationRequest();
-    locationRequest.setInterval(60 * 1000);
+    locationRequest.setInterval(20 * 1000);
     locationRequest.setFastestInterval(1000);
     locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -51,6 +51,7 @@ public class LocationGoogleService extends Service {
       miFusedLocationCliente.requestLocationUpdates(locationRequest, new LocationLlamada(), null);
     }
 
+    // Comentamos el Timer Task para dejar solo el servicio de LocationSerivice capturando posiciones
 //    Timer timerImagenes = new Timer();
 //    timerTaskCapturarPosicion = new TimerTaskCapturarPosicion(getApplicationContext());
 //    timerImagenes.scheduleAtFixedRate(timerTaskCapturarPosicion, (10 * 1000), (10 * 1000));
@@ -79,41 +80,41 @@ public class LocationGoogleService extends Service {
     }
   }
 
-  private class TimerTaskCapturarPosicion extends TimerTask implements OnSuccessListener<Location> {
-    private Context context;
-
-    public TimerTaskCapturarPosicion(Context context){
-      this.context = context;
-    }
-
-    @Override
-    public void run() {
-      Log.v(TAG, "Ejecicion del Run");
-
-      if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-        == PackageManager.PERMISSION_GRANTED &&
-        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-        miFusedLocationCliente.getLastLocation()
-          .addOnSuccessListener(this);
-      }
-    }
-
-    @Override
-    public void onSuccess(Location location) {
-      if(location != null) {
-
-        Intent intent = new Intent("NuevaPosicion");
-        intent.putExtra("latitud", location.getLatitude());
-        intent.putExtra("longitud", location.getLongitude());
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-
-        Log.v(TAG, "Ultima posicion capturada " + location.getLatitude() + ", " + location.getLongitude());
-      }else{
-        Log.e(TAG, "Ultima posicion capturada nula ");
-      }
-    }
-  }
+//  private class TimerTaskCapturarPosicion extends TimerTask implements OnSuccessListener<Location> {
+//    private Context context;
+//
+//    public TimerTaskCapturarPosicion(Context context){
+//      this.context = context;
+//    }
+//
+//    @Override
+//    public void run() {
+//      Log.v(TAG, "Ejecicion del Run");
+//
+//      if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+//        == PackageManager.PERMISSION_GRANTED &&
+//        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//
+//        miFusedLocationCliente.getLastLocation()
+//          .addOnSuccessListener(this);
+//      }
+//    }
+//
+//    @Override
+//    public void onSuccess(Location location) {
+//      if(location != null) {
+//
+//        Intent intent = new Intent("NuevaPosicion");
+//        intent.putExtra("latitud", location.getLatitude());
+//        intent.putExtra("longitud", location.getLongitude());
+//        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+//
+//        Log.v(TAG, "Ultima posicion capturada " + location.getLatitude() + ", " + location.getLongitude());
+//      }else{
+//        Log.e(TAG, "Ultima posicion capturada nula ");
+//      }
+//    }
+//  }
 
   @Override
   public IBinder onBind(Intent intent) {
@@ -125,8 +126,8 @@ public class LocationGoogleService extends Service {
   public void onDestroy() {
     super.onDestroy();
 
-    if(timerTaskCapturarPosicion != null){
-      timerTaskCapturarPosicion.cancel();
-    }
+//    if(timerTaskCapturarPosicion != null){
+//      timerTaskCapturarPosicion.cancel();
+//    }
   }
 }
